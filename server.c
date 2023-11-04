@@ -99,15 +99,14 @@ int main()
     // Receive until the peer shuts down the connection
     do
     {
-
-        iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+       iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
         if (iResult > 0)
         {
             printf("Bytes received: %d\n", iResult);
             printf("String received: %s\n", recvbuf);
-            // Send message depending on message received
-            if(recvbuf=="Hello")
-                strcpy(stringToBeSent, "World!");
+            
+            if(strcmp("Hello", recvbuf)==0)
+                strcpy(stringToBeSent, " World!");
 
             iSendResult = send(ClientSocket, stringToBeSent, (int)strlen(stringToBeSent), 0);
             if (iSendResult == SOCKET_ERROR)
@@ -144,6 +143,12 @@ int main()
     // cleanup
     closesocket(ClientSocket);
     WSACleanup();
+
+    int x=0;
+    while(!x){
+        printf("Quit? (1/0) \n");
+        scanf("%d", &x);
+    }
 
     return 0;
 }

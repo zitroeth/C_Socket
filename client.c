@@ -12,7 +12,7 @@
 
 
 #define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "27015"
+#define DEFAULT_PORT "8383"
 
 int  main(int argc, char **argv) 
 {
@@ -25,12 +25,6 @@ int  main(int argc, char **argv)
     char recvbuf[DEFAULT_BUFLEN];
     int iResult;
     int recvbuflen = DEFAULT_BUFLEN;
-    
-    // Validate the parameters
-    if (argc != 2) {
-        printf("usage: %s server-name\n", argv[0]);
-        return 1;
-    }
 
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
@@ -83,7 +77,7 @@ int  main(int argc, char **argv)
     }
 
     // Send an initial buffer
-    iResult = send( ConnectSocket, sendbuf, (int)strlen(sendbuf), 0 );
+    iResult = send( ConnectSocket, argv[2], (int)strlen(argv[2])+1, 0 );
     if (iResult == SOCKET_ERROR) {
         printf("send failed with error: %d\n", WSAGetLastError());
         closesocket(ConnectSocket);
@@ -92,6 +86,7 @@ int  main(int argc, char **argv)
     }
 
     printf("Bytes Sent: %ld\n", iResult);
+    printf("Message Sent: %s\n", argv[2]);
 
     // shutdown the connection since no more data will be sent
     iResult = shutdown(ConnectSocket, SD_SEND);
@@ -106,8 +101,10 @@ int  main(int argc, char **argv)
     do {
 
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-        if ( iResult > 0 )
+        if ( iResult > 0 ){
             printf("Bytes received: %d\n", iResult);
+            printf("Message received: %s\n", recvbuf);
+            }
         else if ( iResult == 0 )
             printf("Connection closed\n");
         else
