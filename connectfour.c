@@ -12,19 +12,17 @@ int main()
 {
 
     int board[BOARD_SIZE_VERT][BOARD_SIZE_HORIZ] = {
-        
-        
+
         {0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 1},
         {0, 0, 0, 0, 0, 1, 0},
         {0, 0, 0, 0, 1, 0, 0},
-        {0, 0, 0, 1, 0, 0, 0}
-    };
+        {0, 0, 0, 1, 0, 0, 0}};
 
     display_board(board);
 
-    if(check_gamewin(board)==0)
+    if (check_gamewin(board) == 0)
         printf("no winners");
 
     return 0;
@@ -42,7 +40,7 @@ void display_board(int board[][BOARD_SIZE_HORIZ])
         for (j = 0; j < BOARD_SIZE_HORIZ; j++)
             printf("---+");
         printf("\n");
-        printf("%d|",i);
+        printf("%d|", i);
         for (j = 0; j < BOARD_SIZE_HORIZ; j++)
         {
             switch (board[i][j])
@@ -108,7 +106,7 @@ void drop_disc(int board[][BOARD_SIZE_HORIZ])
         if (board[i][drop_col] == 0)
         {
             board[i][drop_col] = PLAYER_NUM;
-            (check_gamewin(board)) ? (printf("\nPlayer %d wins!\n", PLAYER_NUM)):(printf(""));
+            (check_gamewin(board)) ? (printf("\nPlayer %d wins!\n", PLAYER_NUM)) : (printf(""));
             break;
         }
     }
@@ -122,9 +120,9 @@ int check_gamewin(int board[][BOARD_SIZE_HORIZ])
     {
         for (col = 0; col < BOARD_SIZE_HORIZ; col++)
         {
-            ((col + 4) <= BOARD_SIZE_HORIZ) ? (x_bound = 1) : (x_bound = 0); //x-axis right
-            ((row + 4) <= BOARD_SIZE_VERT) ? (ny_bound = 1) : (ny_bound = 0); //y-axis down
-            (row>=3) ? (y_bound = 1) : (y_bound = 0); //y-axis up
+            ((col + 4) <= BOARD_SIZE_HORIZ) ? (x_bound = 1) : (x_bound = 0);  // x-axis right
+            ((row + 4) <= BOARD_SIZE_VERT) ? (ny_bound = 1) : (ny_bound = 0); // y-axis down
+            (row >= 3) ? (y_bound = 1) : (y_bound = 0);                       // y-axis up
 
             if (x_bound == 1)
             {
