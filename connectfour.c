@@ -33,17 +33,17 @@ int main() {
     int inputNum, win, algo;
 
     while (1) {
-        
+
         display_board(board);
         inputNum = scan_num(BOARD_SIZE_HORIZ);
         drop_disc(board, inputNum, PLAYER_NUM);
         algo = move_algo(board);
-        printf("\nalgo %d\n", algo);
+
         drop_disc(board, algo, ENEMY_NUM);
         win = check_gamewin(board);
         if (win > 0)
             break;
-        //system("cls");
+        system("cls");
     };
 
     system("cls");
@@ -136,7 +136,7 @@ indexBound set_indexbound(int row, int col) {
     indexBound newIB;
 
     ((col + 4) <= BOARD_SIZE_HORIZ) ? (newIB.x_bound = 1) : (newIB.x_bound = 0);  // x-axis right
-    (col >= 3) ? (newIB.nx_bound = 1) : (newIB.nx_bound = 0);                      // x-axis left
+    (col >= 3) ? (newIB.nx_bound = 1) : (newIB.nx_bound = 0);                     // x-axis left
     ((row + 4) <= BOARD_SIZE_VERT) ? (newIB.ny_bound = 1) : (newIB.ny_bound = 0); // y-axis down
     (row >= 3) ? (newIB.y_bound = 1) : (newIB.y_bound = 0);                       // y-axis up
 
@@ -146,80 +146,53 @@ indexBound set_indexbound(int row, int col) {
 int check_gamewin(int board[][BOARD_SIZE_HORIZ]) {
     int row, col;
     indexBound currIB;
+    for (int i = 1; i <= 2; i++) {
+        for (row = 0; row < BOARD_SIZE_VERT; row++) {
+            for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
+                currIB = set_indexbound(row, col);
 
-    for (row = 0; row < BOARD_SIZE_VERT; row++) {
-        for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
-            currIB = set_indexbound(row, col);
-
-            if (currIB.x_bound == 1) {
-                if (
-                    board[row][col] == 1 &&
-                    board[row][col + 1] == 1 &&
-                    board[row][col + 2] == 1 &&
-                    board[row][col + 3] == 1) {
-                    printf("\nWin by move->right\n");
-                    return 1;
-                } else if (
-                    board[row][col] == 2 &&
-                    board[row][col + 1] == 2 &&
-                    board[row][col + 2] == 2 &&
-                    board[row][col + 3] == 2) {
-                    printf("\nWin by move->right\n");
-                    return 2;
+                if (currIB.x_bound == 1) {
+                    if (
+                        board[row][col] == i &&
+                        board[row][col + 1] == i &&
+                        board[row][col + 2] == i &&
+                        board[row][col + 3] == i) {
+                        printf("\nWin by move->right\n");
+                        return i;
+                    }
                 }
-            }
 
-            if (currIB.ny_bound == 1) {
-                if (
-                    board[row][col] == 1 &&
-                    board[row + 1][col] == 1 &&
-                    board[row + 2][col] == 1 &&
-                    board[row + 3][col] == 1) {
-                    printf("\nWin by move->down\n");
-                    return 1;
-                } else if (
-                    board[row][col] == 2 &&
-                    board[row + 1][col] == 2 &&
-                    board[row + 2][col] == 2 &&
-                    board[row + 3][col] == 2) {
-                    printf("\nWin by move->down\n");
-                    return 2;
+                if (currIB.ny_bound == 1) {
+                    if (
+                        board[row][col] == i &&
+                        board[row + 1][col] == i &&
+                        board[row + 2][col] == i &&
+                        board[row + 3][col] == i) {
+                        printf("\nWin by move->down\n");
+                        return i;
+                    }
                 }
-            }
 
-            if (currIB.x_bound == 1 && currIB.ny_bound == 1) {
-                if (
-                    board[row][col] == 1 &&
-                    board[row + 1][col + 1] == 1 &&
-                    board[row + 2][col + 2] == 1 &&
-                    board[row + 3][col + 3] == 1) {
-                    printf("\nWin by move->down right\n");
-                    return 1;
-                } else if (
-                    board[row][col] == 2 &&
-                    board[row + 1][col + 1] == 2 &&
-                    board[row + 2][col + 2] == 2 &&
-                    board[row + 3][col + 3] == 2) {
-                    printf("\nWin by move->down right\n");
-                    return 2;
+                if (currIB.x_bound == 1 && currIB.ny_bound == 1) {
+                    if (
+                        board[row][col] == i &&
+                        board[row + 1][col + 1] == i &&
+                        board[row + 2][col + 2] == i &&
+                        board[row + 3][col + 3] == i) {
+                        printf("\nWin by move->down right\n");
+                        return i;
+                    }
                 }
-            }
 
-            if (currIB.nx_bound == 1 && currIB.ny_bound == 1) {
-                if (
-                    board[row][col] == 1 &&
-                    board[row + 1][col - 1] == 1 &&
-                    board[row + 2][col - 2] == 1 &&
-                    board[row + 3][col - 3] == 1) {
-                    printf("\nWin by move->down left\n");
-                    return 1;
-                } else if (
-                    board[row][col] == 2 &&
-                    board[row + 1][col - 1] == 2 &&
-                    board[row + 2][col - 2] == 2 &&
-                    board[row + 3][col - 3] == 2) {
-                    printf("\nWin by move->down left\n");
-                    return 2;
+                if (currIB.nx_bound == 1 && currIB.ny_bound == 1) {
+                    if (
+                        board[row][col] == i &&
+                        board[row + 1][col - 1] == i &&
+                        board[row + 2][col - 2] == i &&
+                        board[row + 3][col - 3] == i) {
+                        printf("\nWin by move->down left\n");
+                        return i;
+                    }
                 }
             }
         }
@@ -237,7 +210,7 @@ int check_gamewin(int board[][BOARD_SIZE_HORIZ]) {
 int move_algo(int board[][BOARD_SIZE_HORIZ]) {
     int row, col;
     indexBound currIB;
-    
+
     for (row = 0; row < BOARD_SIZE_VERT; row++) {
         for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
             currIB = set_indexbound(row, col);
@@ -317,7 +290,7 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
             }
         }
     }
-    
+
     for (row = 0; row < BOARD_SIZE_VERT; row++) {
         for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
             currIB = set_indexbound(row, col);
@@ -397,14 +370,14 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
             }
         }
     }
-    
+
     for (row = 0; row < BOARD_SIZE_VERT; row++) {
         for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
             currIB = set_indexbound(row, col);
 
             if (currIB.x_bound) {
-                if (board[row][col] == PLAYER_NUM && 
-                    board[row][col + 1] == 0 && 
+                if (board[row][col] == PLAYER_NUM &&
+                    board[row][col + 1] == 0 &&
                     board[row][col + 2] == PLAYER_NUM) {
                     if (row == (BOARD_SIZE_VERT - 1)) {
                         return col + 1;
@@ -417,8 +390,8 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
             }
 
             if (currIB.nx_bound) {
-                if (board[row][col] == PLAYER_NUM && 
-                    board[row][col - 1] == 0 && 
+                if (board[row][col] == PLAYER_NUM &&
+                    board[row][col - 1] == 0 &&
                     board[row][col - 2] == PLAYER_NUM) {
                     if (row == (BOARD_SIZE_VERT - 1)) {
                         return col - 1;
@@ -430,39 +403,39 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
                 }
             }
 
-            if (currIB.x_bound == 1 && 
+            if (currIB.x_bound == 1 &&
                 currIB.y_bound == 1) {
                 if (board[row][col] == PLAYER_NUM && board[row - 1][col + 1] == 0 && board[row - 2][col + 2] == PLAYER_NUM && board[row][col + 1] != 0)
                     return col + 1;
             }
 
-            if (currIB.x_bound == 1 && 
+            if (currIB.x_bound == 1 &&
                 currIB.ny_bound == 1) {
                 if (board[row][col] == PLAYER_NUM && board[row + 1][col + 1] == 0 && board[row + 2][col + 2] == PLAYER_NUM && board[row + 2][col + 1] != 0)
                     return col + 1;
             }
 
-            if (currIB.nx_bound == 1 && 
+            if (currIB.nx_bound == 1 &&
                 currIB.ny_bound == 1) {
                 if (board[row][col] == PLAYER_NUM && board[row + 1][col - 1] == 0 && board[row + 2][col - 2] == PLAYER_NUM && board[row + 2][col - 1] != 0)
                     return col - 1;
             }
 
-            if (currIB.nx_bound == 1 && 
+            if (currIB.nx_bound == 1 &&
                 currIB.y_bound == 1) {
                 if (board[row][col] == PLAYER_NUM && board[row - 1][col - 1] == 0 && board[row - 2][col - 2] == PLAYER_NUM && board[row][col - 1] != 0)
                     return col - 1;
             }
         }
     }
-    
+
     for (row = 0; row < BOARD_SIZE_VERT; row++) {
         for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
             currIB = set_indexbound(row, col);
-            
+
             if (currIB.x_bound) {
-                if (board[row][col] == PLAYER_NUM && 
-                    board[row][col + 1] == PLAYER_NUM && 
+                if (board[row][col] == PLAYER_NUM &&
+                    board[row][col + 1] == PLAYER_NUM &&
                     board[row][col + 2] == 0) {
                     if (row == (BOARD_SIZE_VERT - 1)) {
                         return col + 2;
@@ -473,10 +446,10 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
                     }
                 }
             }
-            
+
             if (currIB.nx_bound) {
-                if (board[row][col] == PLAYER_NUM && 
-                    board[row][col - 1] == PLAYER_NUM && 
+                if (board[row][col] == PLAYER_NUM &&
+                    board[row][col - 1] == PLAYER_NUM &&
                     board[row][col - 2] == 0) {
                     if (row == (BOARD_SIZE_VERT - 1)) {
                         return col - 2;
@@ -488,25 +461,25 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
                 }
             }
 
-            if (currIB.x_bound == 1 && 
+            if (currIB.x_bound == 1 &&
                 currIB.y_bound == 1) {
                 if (board[row][col] == PLAYER_NUM && board[row - 1][col + 1] == PLAYER_NUM && board[row - 2][col + 2] == 0 && board[row - 1][col + 2] != 0)
                     return col + 2;
             }
 
-            if (currIB.x_bound == 1 && 
+            if (currIB.x_bound == 1 &&
                 currIB.ny_bound == 1) {
                 if (board[row][col] == PLAYER_NUM && board[row + 1][col + 1] == PLAYER_NUM && board[row + 2][col + 2] == 0 && board[row + 3][col + 2] != 0)
                     return col + 2;
             }
 
-            if (currIB.nx_bound == 1 && 
+            if (currIB.nx_bound == 1 &&
                 currIB.ny_bound == 1) {
                 if (board[row][col] == PLAYER_NUM && board[row + 1][col - 1] == PLAYER_NUM && board[row + 2][col - 2] == 0 && board[row + 3][col - 2] != 0)
                     return col - 2;
             }
 
-            if (currIB.nx_bound == 1 && 
+            if (currIB.nx_bound == 1 &&
                 currIB.y_bound == 1) {
                 if (board[row][col] == PLAYER_NUM && board[row - 1][col - 1] == PLAYER_NUM && board[row - 2][col - 2] == 0 && board[row - 1][col - 2] != 0)
                     return col - 2;
@@ -527,14 +500,14 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
         }
     }
     */
-   
-   for (row = 0; row < BOARD_SIZE_VERT; row++) {
+
+    for (row = 0; row < BOARD_SIZE_VERT; row++) {
         for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
             currIB = set_indexbound(row, col);
 
             if (currIB.x_bound) {
-                if (board[row][col] == ENEMY_NUM && 
-                    board[row][col + 1] == ENEMY_NUM && 
+                if (board[row][col] == ENEMY_NUM &&
+                    board[row][col + 1] == ENEMY_NUM &&
                     board[row][col + 2] == 0) {
                     if (row == (BOARD_SIZE_VERT - 1)) {
                         return col + 2;
@@ -547,8 +520,8 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
             }
 
             if (currIB.nx_bound) {
-                if (board[row][col] == ENEMY_NUM && 
-                    board[row][col - 1] == ENEMY_NUM && 
+                if (board[row][col] == ENEMY_NUM &&
+                    board[row][col - 1] == ENEMY_NUM &&
                     board[row][col - 2] == 0) {
                     if (row == (BOARD_SIZE_VERT - 1)) {
                         return col - 2;
@@ -560,40 +533,49 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
                 }
             }
 
-            if (currIB.x_bound == 1 && 
+            if (currIB.x_bound == 1 &&
                 currIB.y_bound == 1) {
-                if (board[row][col] == ENEMY_NUM && 
-                    board[row - 1][col + 1] == ENEMY_NUM && 
-                    board[row - 2][col + 2] == 0 && 
+                if (board[row][col] == ENEMY_NUM &&
+                    board[row - 1][col + 1] == ENEMY_NUM &&
+                    board[row - 2][col + 2] == 0 &&
                     board[row - 1][col + 2] != 0)
                     return col + 2;
             }
 
-            if (currIB.x_bound == 1 && 
+            if (currIB.x_bound == 1 &&
                 currIB.ny_bound == 1) {
-                if (board[row][col] == ENEMY_NUM && 
-                    board[row + 1][col + 1] == ENEMY_NUM && 
-                    board[row + 2][col + 2] == 0 && 
+                if (board[row][col] == ENEMY_NUM &&
+                    board[row + 1][col + 1] == ENEMY_NUM &&
+                    board[row + 2][col + 2] == 0 &&
                     board[row + 3][col + 2] != 0)
                     return col + 2;
             }
 
-            if (currIB.nx_bound == 1 && 
+            if (currIB.nx_bound == 1 &&
                 currIB.ny_bound == 1) {
-                if (board[row][col] == ENEMY_NUM && 
-                    board[row + 1][col - 1] == ENEMY_NUM && 
-                    board[row + 2][col - 2] == 0 && 
+                if (board[row][col] == ENEMY_NUM &&
+                    board[row + 1][col - 1] == ENEMY_NUM &&
+                    board[row + 2][col - 2] == 0 &&
                     board[row + 3][col - 2] != 0)
                     return col - 2;
             }
 
-            if (currIB.nx_bound == 1 && 
+            if (currIB.nx_bound == 1 &&
                 currIB.y_bound == 1) {
-                if (board[row][col] == ENEMY_NUM && 
-                    board[row - 1][col - 1] == ENEMY_NUM && 
-                    board[row - 2][col - 2] == 0 && 
+                if (board[row][col] == ENEMY_NUM &&
+                    board[row - 1][col - 1] == ENEMY_NUM &&
+                    board[row - 2][col - 2] == 0 &&
                     board[row - 1][col - 2] != 0)
                     return col - 2;
+            }
+        }
+    }
+
+    int i, drop_col;
+    for (drop_col = 0; drop_col < BOARD_SIZE_HORIZ; drop_col++) {
+        for (i = (BOARD_SIZE_VERT - 1); i >= 0; i--) {
+            if (board[i][drop_col] == 0) {
+                return drop_col;
             }
         }
     }
