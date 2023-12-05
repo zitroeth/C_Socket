@@ -34,6 +34,9 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]);
 void reset_board(int board[][BOARD_SIZE_HORIZ]);
 int simulate(int board[][BOARD_SIZE_HORIZ], int row, int col);
 int simulate_twice(int board[][BOARD_SIZE_HORIZ], int drop_col);
+int simulate_doubleatk(int board[][BOARD_SIZE_HORIZ], int drop_col, int player);
+int simulate_doubleatkgap(int board[][BOARD_SIZE_HORIZ], int drop_col, int player);
+
 
 int main(void) {
     WSADATA wsaData;
@@ -360,200 +363,40 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
             return col;
     }
 
-    for (row = 0; row < BOARD_SIZE_VERT; row++) {
-        for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
-            currIB = set_indexbound(row, col);
+    for (col = 0; col < 4; col++) {
+        if (simulate_doubleatk(board, col, PLAYER_NUM))
+            return (rand() % 2) ? col : col + 3;
+    }
+    
+    for (col = 2; col < 5; col++) {
+        if (simulate_doubleatkgap(board, col, PLAYER_NUM))
+            return col;
+    }
 
-            if (currIB.east) {
-                if (board[row][col] == PLAYER_NUM &&
-                    board[row][col + 1] == 0 &&
-                    board[row][col + 2] == PLAYER_NUM) {
-                    if (row == (BOARD_SIZE_VERT - 1)) {
-                        return col + 1;
-                    } else if (row < (BOARD_SIZE_VERT - 1)) {
-                        if (board[row + 1][col + 1] != 0) {
-                            return col + 1;
-                        }
-                    }
+   for (col = 0; col < 4; col++) {
+        if (simulate_doubleatk(board, col, ENEMY_NUM))
+            return (rand() % 2) ? col : col + 3;
+    }
+    
+    for (col = 2; col < 5; col++) {
+        if (simulate_doubleatkgap(board, col, ENEMY_NUM))
+            return col;
+    }
+
+    int drop_col;
+    for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
+        if (simulate_twice(board, col)) {
+            while (1) {
+                drop_col = rand() % BOARD_SIZE_HORIZ;
+                if (simulate_twice(board, drop_col)) {
+                    return drop_col;
                 }
-            }
-
-            if (currIB.west) {
-                if (board[row][col] == PLAYER_NUM &&
-                    board[row][col - 1] == 0 &&
-                    board[row][col - 2] == PLAYER_NUM) {
-                    if (row == (BOARD_SIZE_VERT - 1)) {
-                        return col - 1;
-                    } else if (row < (BOARD_SIZE_VERT - 1)) {
-                        if (board[row + 1][col - 1] != 0) {
-                            return col - 1;
-                        }
-                    }
-                }
-            }
-
-            if (currIB.east == 1 &&
-                currIB.north == 1) {
-                if (board[row][col] == PLAYER_NUM && board[row - 1][col + 1] == 0 && board[row - 2][col + 2] == PLAYER_NUM && board[row][col + 1] != 0)
-                    return col + 1;
-            }
-
-            if (currIB.east == 1 &&
-                currIB.south == 1) {
-                if (board[row][col] == PLAYER_NUM && board[row + 1][col + 1] == 0 && board[row + 2][col + 2] == PLAYER_NUM && board[row + 2][col + 1] != 0)
-                    return col + 1;
-            }
-
-            if (currIB.west == 1 &&
-                currIB.south == 1) {
-                if (board[row][col] == PLAYER_NUM && board[row + 1][col - 1] == 0 && board[row + 2][col - 2] == PLAYER_NUM && board[row + 2][col - 1] != 0)
-                    return col - 1;
-            }
-
-            if (currIB.west == 1 &&
-                currIB.north == 1) {
-                if (board[row][col] == PLAYER_NUM && board[row - 1][col - 1] == 0 && board[row - 2][col - 2] == PLAYER_NUM && board[row][col - 1] != 0)
-                    return col - 1;
             }
         }
     }
 
-    for (row = 0; row < BOARD_SIZE_VERT; row++) {
-        for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
-            currIB = set_indexbound(row, col);
-
-            if (currIB.east) {
-                if (board[row][col] == PLAYER_NUM &&
-                    board[row][col + 1] == PLAYER_NUM &&
-                    board[row][col + 2] == 0) {
-                    if (row == (BOARD_SIZE_VERT - 1)) {
-                        return col + 2;
-                    } else if (row < (BOARD_SIZE_VERT - 1)) {
-                        if (board[row + 1][col + 2] != 0) {
-                            return col + 2;
-                        }
-                    }
-                }
-            }
-
-            if (currIB.west) {
-                if (board[row][col] == PLAYER_NUM &&
-                    board[row][col - 1] == PLAYER_NUM &&
-                    board[row][col - 2] == 0) {
-                    if (row == (BOARD_SIZE_VERT - 1)) {
-                        return col - 2;
-                    } else if (row < (BOARD_SIZE_VERT - 1)) {
-                        if (board[row + 1][col - 2] != 0) {
-                            return col - 2;
-                        }
-                    }
-                }
-            }
-
-            if (currIB.east == 1 &&
-                currIB.north == 1) {
-                if (board[row][col] == PLAYER_NUM && board[row - 1][col + 1] == PLAYER_NUM && board[row - 2][col + 2] == 0 && board[row - 1][col + 2] != 0)
-                    return col + 2;
-            }
-
-            if (currIB.east == 1 &&
-                currIB.south == 1) {
-                if (board[row][col] == PLAYER_NUM && board[row + 1][col + 1] == PLAYER_NUM && board[row + 2][col + 2] == 0 && board[row + 3][col + 2] != 0)
-                    return col + 2;
-            }
-
-            if (currIB.west == 1 &&
-                currIB.south == 1) {
-                if (board[row][col] == PLAYER_NUM && board[row + 1][col - 1] == PLAYER_NUM && board[row + 2][col - 2] == 0 && board[row + 3][col - 2] != 0)
-                    return col - 2;
-            }
-
-            if (currIB.west == 1 &&
-                currIB.north == 1) {
-                if (board[row][col] == PLAYER_NUM && board[row - 1][col - 1] == PLAYER_NUM && board[row - 2][col - 2] == 0 && board[row - 1][col - 2] != 0)
-                    return col - 2;
-            }
-        }
-    }
-
-    for (row = 0; row < BOARD_SIZE_VERT; row++) {
-        for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
-            currIB = set_indexbound(row, col);
-
-            if (currIB.east) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row][col + 1] == ENEMY_NUM &&
-                    board[row][col + 2] == 0) {
-                    if (row == (BOARD_SIZE_VERT - 1)) {
-                        return col + 2;
-                    } else if (row < (BOARD_SIZE_VERT - 1)) {
-                        if (board[row + 1][col + 2] != 0) {
-                            return col + 2;
-                        }
-                    }
-                }
-            }
-
-            if (currIB.west) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row][col - 1] == ENEMY_NUM &&
-                    board[row][col - 2] == 0) {
-                    if (row == (BOARD_SIZE_VERT - 1)) {
-                        return col - 2;
-                    } else if (row < (BOARD_SIZE_VERT - 1)) {
-                        if (board[row + 1][col - 2] != 0) {
-                            return col - 2;
-                        }
-                    }
-                }
-            }
-
-            if (currIB.east == 1 &&
-                currIB.north == 1) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row - 1][col + 1] == ENEMY_NUM &&
-                    board[row - 2][col + 2] == 0 &&
-                    board[row - 1][col + 2] != 0)
-                    return col + 2;
-            }
-
-            if (currIB.east == 1 &&
-                currIB.south == 1) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row + 1][col + 1] == ENEMY_NUM &&
-                    board[row + 2][col + 2] == 0 &&
-                    board[row + 3][col + 2] != 0)
-                    return col + 2;
-            }
-
-            if (currIB.west == 1 &&
-                currIB.south == 1) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row + 1][col - 1] == ENEMY_NUM &&
-                    board[row + 2][col - 2] == 0 &&
-                    board[row + 3][col - 2] != 0)
-                    return col - 2;
-            }
-
-            if (currIB.west == 1 &&
-                currIB.north == 1) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row - 1][col - 1] == ENEMY_NUM &&
-                    board[row - 2][col - 2] == 0 &&
-                    board[row - 1][col - 2] != 0)
-                    return col - 2;
-            }
-        }
-    }
-
-    int i, drop_col;
-
-    while (1) {
-        drop_col = rand() % BOARD_SIZE_HORIZ;
-        if (simulate_twice(board, drop_col)) {
-            return drop_col;
-        }
-    }
+    drop_col = rand() % BOARD_SIZE_HORIZ;
+    return drop_col;
 }
 
 int simulate(int board[][BOARD_SIZE_HORIZ], int drop_col, int player) {
@@ -577,6 +420,36 @@ int simulate_twice(int board[][BOARD_SIZE_HORIZ], int drop_col) {
                 return 1;
         } else
             return 1;
+    }
+    return 0;
+}
+
+int simulate_doubleatk(int board[][BOARD_SIZE_HORIZ], int drop_col, int player) {
+    int boardcpy[BOARD_SIZE_VERT][BOARD_SIZE_HORIZ] = {0};
+    int counter = 0;
+    memcpy(boardcpy, board, sizeof(int) * BOARD_SIZE_HORIZ * BOARD_SIZE_VERT);
+
+    if (drop_col < 4) {
+        if (drop_disc(boardcpy, drop_col, player))
+            if (drop_disc(boardcpy, drop_col + 3, player))
+                if (check_gamewin(boardcpy) == player)
+                    return 1;
+    }
+    return 0;
+}
+
+int simulate_doubleatkgap(int board[][BOARD_SIZE_HORIZ], int drop_col, int player) {
+    int boardcpy[BOARD_SIZE_VERT][BOARD_SIZE_HORIZ] = {0};
+    int counter = 0;
+    memcpy(boardcpy, board, sizeof(int) * BOARD_SIZE_HORIZ * BOARD_SIZE_VERT);
+
+    if (drop_col >= 2 && drop_col <= 4) {
+        if (drop_disc(boardcpy, drop_col, player))
+            if (drop_disc(boardcpy, drop_col -2, player))
+                if (check_gamewin(boardcpy) == player)
+                    if (drop_disc(boardcpy, drop_col + 2, player))
+                        if (check_gamewin(boardcpy) == player)
+                            return 1;
     }
     return 0;
 }
