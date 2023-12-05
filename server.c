@@ -121,8 +121,8 @@ int main(void) {
             printf("Bytes received: %d\n", iResult);
             recvOpt = recvbuf[0] - '0';
             recvNum = recvbuf[2] - '0';
-            if(check_gamewin(board)!=ENEMY_NUM)
-            drop_disc(board, recvNum, PLAYER_NUM);
+            if (check_gamewin(board) != ENEMY_NUM)
+                drop_disc(board, recvNum, PLAYER_NUM);
             display_board(board);
 
             if (recvOpt == 1) {
@@ -139,10 +139,16 @@ int main(void) {
                     return 1;
                 }
             } else if (recvOpt == 2) {
-                drop_col = scan_num(BOARD_SIZE_HORIZ);
-                drop_disc(board, drop_col, ENEMY_NUM);
-                system("cls");
-                display_board(board);
+                while (1) {
+                    system("cls");
+                    display_board(board);
+                    drop_col = scan_num(BOARD_SIZE_HORIZ);
+                    if (drop_disc(board, drop_col, ENEMY_NUM)){
+                        system("cls");
+                        display_board(board);
+                        break;
+                        }
+                }
                 snprintf(sendbuf, 5, "2 %d", drop_col);
                 iSendResult = send(ClientSocket, sendbuf, (int)strlen(sendbuf), 0);
                 if (iSendResult == SOCKET_ERROR) {
@@ -153,7 +159,10 @@ int main(void) {
                 }
                 printf("\nBytes sent: %d\n", iSendResult);
             } else if (recvOpt == 3) {
-                printf("\nPlayer %d wins!\nAwaiting client input...", check_gamewin(board));
+                if (check_gamewin(board) == 3)
+                    printf("\nGame ended in a draw!\nAwaiting client input...");
+                else
+                    printf("\nPlayer %d wins!\nAwaiting client input...", check_gamewin(board));
                 reset_board(board);
             }
         } else if (iResult == 0)
@@ -264,9 +273,9 @@ indexBound set_indexbound(int row, int col) {
     indexBound newIB;
 
     ((col + 4) <= BOARD_SIZE_HORIZ) ? (newIB.east = 1) : (newIB.east = 0);  // x-axis right
-    (col >= 3) ? (newIB.west = 1) : (newIB.west = 0);                     // x-axis left
+    (col >= 3) ? (newIB.west = 1) : (newIB.west = 0);                       // x-axis left
     ((row + 4) <= BOARD_SIZE_VERT) ? (newIB.south = 1) : (newIB.south = 0); // y-axis down
-    (row >= 3) ? (newIB.north = 1) : (newIB.north = 0);                       // y-axis up
+    (row >= 3) ? (newIB.north = 1) : (newIB.north = 0);                     // y-axis up
 
     return newIB;
 }

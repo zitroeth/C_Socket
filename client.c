@@ -112,13 +112,21 @@ int main(int argc, char **argv) {
 
         switch (inputNum) {
         case 1:
-            drop_col = scan_num(BOARD_SIZE_HORIZ);
-            drop_disc(board, drop_col, PLAYER_NUM);
 
-            system("cls");
-            display_board(board);
+            while (1) {
+                system("cls");
+                display_board(board);
+                drop_col = scan_num(BOARD_SIZE_HORIZ);
+                if (drop_disc(board, drop_col, PLAYER_NUM)) {
+                    system("cls");
+                    display_board(board);
+                    break;
+                }
+            }
 
             if (check_gamewin(board) == 1 || check_gamewin(board) == 2) {
+                system("cls");
+                display_board(board);
                 printf("\nPlayer %d wins!\n[1] Continue\n[0] Exit", check_gamewin(board));
                 snprintf(sendbuf, 5, "3 %d", drop_col);
                 iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
@@ -155,8 +163,13 @@ int main(int argc, char **argv) {
                     system("cls");
                     display_board(board);
 
-                    if (check_gamewin(board) == 1 || check_gamewin(board) == 2) {
-                        printf("\nPlayer %d wins!\n[1] Continue\n[0] Exit", check_gamewin(board));
+                    if (check_gamewin(board) == 1 || check_gamewin(board) == 2 || check_gamewin(board) == 3) {
+                        system("cls");
+                        display_board(board);
+                        if (check_gamewin(board) == 3)
+                            printf("\nGame ended in a draw!\n[1] Continue\n[0] Exit");
+                        else
+                            printf("\nPlayer %d wins!\n[1] Continue\n[0] Exit", check_gamewin(board));
                         snprintf(sendbuf, 5, "3 %d", drop_col);
                         iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
                         if (iResult == SOCKET_ERROR) {
@@ -182,13 +195,20 @@ int main(int argc, char **argv) {
             }
             break;
         case 2:
-            drop_col = scan_num(BOARD_SIZE_HORIZ);
-            drop_disc(board, drop_col, PLAYER_NUM);
-
-            system("cls");
-            display_board(board);
+            while (1) {
+                system("cls");
+                display_board(board);
+                drop_col = scan_num(BOARD_SIZE_HORIZ);
+                if (drop_disc(board, drop_col, PLAYER_NUM)){
+                    system("cls");
+                    display_board(board);
+                    break;
+                }
+            }
 
             if (check_gamewin(board) == 1 || check_gamewin(board) == 2) {
+                system("cls");
+                display_board(board);
                 printf("\nPlayer %d wins!\n[1] Continue\n[0] Exit", check_gamewin(board));
                 snprintf(sendbuf, 5, "3 %d", drop_col);
                 iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
@@ -225,8 +245,13 @@ int main(int argc, char **argv) {
                     system("cls");
                     display_board(board);
 
-                    if (check_gamewin(board) == 1 || check_gamewin(board) == 2) {
-                        printf("\nPlayer %d wins!\n[1] Continue\n[0] Exit", check_gamewin(board));
+                    if (check_gamewin(board) == 1 || check_gamewin(board) == 2 || check_gamewin(board) == 3) {
+                        system("cls");
+                        display_board(board);
+                        if (check_gamewin(board) == 3)
+                            printf("\nGame ended in a draw!\n[1] Continue\n[0] Exit");
+                        else
+                            printf("\nPlayer %d wins!\n[1] Continue\n[0] Exit", check_gamewin(board));
                         snprintf(sendbuf, 5, "3 %d", drop_col);
                         iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
 
@@ -367,9 +392,9 @@ indexBound set_indexbound(int row, int col) {
     indexBound newIB;
 
     ((col + 4) <= BOARD_SIZE_HORIZ) ? (newIB.east = 1) : (newIB.east = 0);  // x-axis right
-    (col >= 3) ? (newIB.west = 1) : (newIB.west = 0);                     // x-axis left
+    (col >= 3) ? (newIB.west = 1) : (newIB.west = 0);                       // x-axis left
     ((row + 4) <= BOARD_SIZE_VERT) ? (newIB.south = 1) : (newIB.south = 0); // y-axis down
-    (row >= 3) ? (newIB.north = 1) : (newIB.north = 0);                       // y-axis up
+    (row >= 3) ? (newIB.north = 1) : (newIB.north = 0);                     // y-axis up
 
     return newIB;
 }
