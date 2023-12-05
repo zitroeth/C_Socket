@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #define BOARD_SIZE_VERT 6
 #define BOARD_SIZE_HORIZ 7
 #define PLAYER_NUM 1
@@ -18,6 +19,7 @@ indexBound set_indexbound(int row, int col);
 int check_gamewin(int board[][BOARD_SIZE_HORIZ]);
 int move_algo(int board[][BOARD_SIZE_HORIZ]);
 int simulate(int board[][BOARD_SIZE_HORIZ], int row, int col);
+int simulate_twice(int board[][BOARD_SIZE_HORIZ], int drop_col);
 
 int main() {
     int board[BOARD_SIZE_VERT][BOARD_SIZE_HORIZ] = {
@@ -30,23 +32,23 @@ int main() {
         {0, 0, 0, 0, 0, 0, 0}
         */
         0};
-
     int inputNum, win, algo;
+    srand(time(NULL));
 
     while (1) {
 
         display_board(board);
 
-        while(1){
+        while (1) {
             inputNum = scan_num(BOARD_SIZE_HORIZ);
-            if(drop_disc(board, inputNum, PLAYER_NUM))
-            break;
+            if (drop_disc(board, inputNum, PLAYER_NUM))
+                break;
         }
 
-        while(1){
+        while (1) {
             algo = move_algo(board);
-            if(drop_disc(board, algo, ENEMY_NUM))
-            break;
+            if (drop_disc(board, algo, ENEMY_NUM))
+                break;
         }
 
         win = check_gamewin(board);
@@ -137,9 +139,9 @@ int drop_disc(int board[][BOARD_SIZE_HORIZ], int drop_col, int diskType) {
                 return valid;
             }
         }
-    } else{
+    } else {
         return valid;
-        }
+    }
 }
 
 indexBound set_indexbound(int row, int col) {
@@ -221,164 +223,14 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
     int row, col;
     indexBound currIB;
 
-    for (row = 0; row < BOARD_SIZE_VERT; row++) {
-        for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
-            currIB = set_indexbound(row, col);
-
-            if (currIB.east) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row][col + 1] == ENEMY_NUM &&
-                    board[row][col + 2] == ENEMY_NUM &&
-                    board[row][col + 3] == 0) {
-                    if (row == (BOARD_SIZE_VERT - 1)) {
-                        return col + 3;
-                    } else if (row < (BOARD_SIZE_VERT - 1)) {
-                        if (board[row + 1][col + 3] != 0) {
-                            return col + 3;
-                        }
-                    }
-                }
-            }
-
-            if (currIB.west) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row][col - 1] == ENEMY_NUM &&
-                    board[row][col - 2] == ENEMY_NUM &&
-                    board[row][col - 3] == 0) {
-                    if (row == (BOARD_SIZE_VERT - 1)) {
-                        return col - 3;
-                    } else if (row < (BOARD_SIZE_VERT - 1)) {
-                        if (board[row + 1][col - 3] != 0) {
-                            return col - 3;
-                        }
-                    }
-                }
-            }
-
-            if (currIB.east == 1 && currIB.north == 1) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row - 1][col + 1] == ENEMY_NUM &&
-                    board[row - 2][col + 2] == ENEMY_NUM &&
-                    board[row - 3][col + 3] == 0 &&
-                    board[row - 2][col + 3] != 0)
-                    return col + 3;
-            }
-
-            if (currIB.east == 1 && currIB.south == 1) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row + 1][col + 1] == ENEMY_NUM &&
-                    board[row + 2][col + 2] == ENEMY_NUM &&
-                    board[row + 3][col + 3] == 0 &&
-                    (row == (BOARD_SIZE_VERT - 1) || board[row + 4][col + 3] != 0))
-                    return col + 3;
-            }
-
-            if (currIB.west == 1 && currIB.south == 1) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row + 1][col - 1] == ENEMY_NUM &&
-                    board[row + 2][col - 2] == ENEMY_NUM &&
-                    board[row + 3][col - 3] == 0 &&
-                    (row == (BOARD_SIZE_VERT - 1) || board[row + 4][col - 3] != 0))
-                    return col - 3;
-            }
-
-            if (currIB.west == 1 && currIB.north == 1) {
-                if (board[row][col] == ENEMY_NUM &&
-                    board[row - 1][col - 1] == ENEMY_NUM &&
-                    board[row - 2][col - 2] == ENEMY_NUM &&
-                    board[row - 3][col - 3] == 0 &&
-                    board[row - 2][col - 3] != 0)
-                    return col - 3;
-            }
-
-            if (currIB.south == 1) {
-                if (board[row][col] == 0 &&
-                    board[row + 1][col] == ENEMY_NUM &&
-                    board[row + 2][col] == ENEMY_NUM &&
-                    board[row + 3][col] == ENEMY_NUM)
-                    return col;
-            }
-        }
+    for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
+        if (simulate(board, col, ENEMY_NUM))
+            return col;
     }
 
-    for (row = 0; row < BOARD_SIZE_VERT; row++) {
-        for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
-            currIB = set_indexbound(row, col);
-
-            if (currIB.east) {
-                if (board[row][col] == PLAYER_NUM &&
-                    board[row][col + 1] == PLAYER_NUM &&
-                    board[row][col + 2] == PLAYER_NUM &&
-                    board[row][col + 3] == 0) {
-                    if (row == (BOARD_SIZE_VERT - 1)) {
-                        return col + 3;
-                    } else if (row < (BOARD_SIZE_VERT - 1)) {
-                        if (board[row + 1][col + 3] != 0) {
-                            return col + 3;
-                        }
-                    }
-                }
-            }
-
-            if (currIB.west) {
-                if (board[row][col] == PLAYER_NUM &&
-                    board[row][col - 1] == PLAYER_NUM &&
-                    board[row][col - 2] == PLAYER_NUM &&
-                    board[row][col - 3] == 0) {
-                    if (row == (BOARD_SIZE_VERT - 1)) {
-                        return col - 3;
-                    } else if (row < (BOARD_SIZE_VERT - 1)) {
-                        if (board[row + 1][col - 3] != 0) {
-                            return col - 3;
-                        }
-                    }
-                }
-            }
-
-            if (currIB.east == 1 && currIB.north == 1) {
-                if (board[row][col] == PLAYER_NUM &&
-                    board[row - 1][col + 1] == PLAYER_NUM &&
-                    board[row - 2][col + 2] == PLAYER_NUM &&
-                    board[row - 3][col + 3] == 0 &&
-                    board[row - 2][col + 3] != 0)
-                    return col + 3;
-            }
-
-            if (currIB.east == 1 && currIB.south == 1) {
-                if (board[row][col] == PLAYER_NUM &&
-                    board[row + 1][col + 1] == PLAYER_NUM &&
-                    board[row + 2][col + 2] == PLAYER_NUM &&
-                    board[row + 3][col + 3] == 0 &&
-                    (row == (BOARD_SIZE_VERT - 1) || board[row + 4][col + 3] != 0))
-                    return col + 3;
-            }
-
-            if (currIB.west == 1 && currIB.south == 1) {
-                if (board[row][col] == PLAYER_NUM &&
-                    board[row + 1][col - 1] == PLAYER_NUM &&
-                    board[row + 2][col - 2] == PLAYER_NUM &&
-                    board[row + 3][col - 3] == 0 &&
-                    (row == (BOARD_SIZE_VERT - 1) || board[row + 4][col - 3] != 0))
-                    return col - 3;
-            }
-
-            if (currIB.west == 1 && currIB.north == 1) {
-                if (board[row][col] == PLAYER_NUM &&
-                    board[row - 1][col - 1] == PLAYER_NUM &&
-                    board[row - 2][col - 2] == PLAYER_NUM &&
-                    board[row - 3][col - 3] == 0 &&
-                    board[row - 2][col - 3] != 0)
-                    return col - 3;
-            }
-
-            if (currIB.south == 1) {
-                if (board[row][col] == 0 &&
-                    board[row + 1][col] == PLAYER_NUM &&
-                    board[row + 2][col] == PLAYER_NUM &&
-                    board[row + 3][col] == PLAYER_NUM)
-                    return col;
-            }
-        }
+    for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
+        if (simulate(board, col, PLAYER_NUM))
+            return col;
     }
 
     for (row = 0; row < BOARD_SIZE_VERT; row++) {
@@ -580,13 +432,47 @@ int move_algo(int board[][BOARD_SIZE_HORIZ]) {
             }
         }
     }
+    /*
 
-    int i, drop_col;
-    for (drop_col = 0; drop_col < BOARD_SIZE_HORIZ; drop_col++) {
-        for (i = (BOARD_SIZE_VERT - 1); i >= 0; i--) {
-            if (board[i][drop_col] == 0) {
-                return drop_col;
+        for (drop_col = 0; drop_col < BOARD_SIZE_HORIZ; drop_col++) {
+            for (i = (BOARD_SIZE_VERT - 1); i >= 0; i--) {
+                if (board[i][drop_col] == 0) {
+                    return drop_col;
+                }
             }
         }
+    */
+    int i, drop_col;
+
+    while (1) {
+        drop_col = rand() % BOARD_SIZE_HORIZ;
+        if (simulate_twice(board, drop_col)) {
+            return drop_col;
+        }
     }
+}
+
+int simulate(int board[][BOARD_SIZE_HORIZ], int drop_col, int player) {
+    int boardcpy[BOARD_SIZE_VERT][BOARD_SIZE_HORIZ] = {0};
+    memcpy(boardcpy, board, sizeof(int) * BOARD_SIZE_HORIZ * BOARD_SIZE_VERT);
+    if (drop_disc(boardcpy, drop_col, player))
+        if (check_gamewin(boardcpy) == player)
+            return 1;
+    return 0;
+}
+
+int simulate_twice(int board[][BOARD_SIZE_HORIZ], int drop_col) {
+    int boardcpy[BOARD_SIZE_VERT][BOARD_SIZE_HORIZ] = {0};
+    memcpy(boardcpy, board, sizeof(int) * BOARD_SIZE_HORIZ * BOARD_SIZE_VERT);
+
+    if (drop_disc(boardcpy, drop_col, ENEMY_NUM)) {
+        if (drop_disc(boardcpy, drop_col, PLAYER_NUM)) {
+            if (check_gamewin(boardcpy) == PLAYER_NUM)
+                return 0;
+            else if (check_gamewin(boardcpy) != PLAYER_NUM)
+                return 1;
+        } else
+            return 1;
+    }
+    return 0;
 }
