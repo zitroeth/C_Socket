@@ -19,10 +19,10 @@
 #define ENEMY_NUM 2
 
 typedef struct {
-    int x_bound;
-    int y_bound;
-    int nx_bound;
-    int ny_bound;
+    int north;
+    int east;
+    int south;
+    int west;
 } indexBound;
 
 void display_board(int board[][BOARD_SIZE_HORIZ]);
@@ -366,10 +366,10 @@ int drop_disc(int board[][BOARD_SIZE_HORIZ], int drop_col, int diskType) {
 indexBound set_indexbound(int row, int col) {
     indexBound newIB;
 
-    ((col + 4) <= BOARD_SIZE_HORIZ) ? (newIB.x_bound = 1) : (newIB.x_bound = 0);  // x-axis right
-    (col >= 3) ? (newIB.nx_bound = 1) : (newIB.nx_bound = 0);                     // x-axis left
-    ((row + 4) <= BOARD_SIZE_VERT) ? (newIB.ny_bound = 1) : (newIB.ny_bound = 0); // y-axis down
-    (row >= 3) ? (newIB.y_bound = 1) : (newIB.y_bound = 0);                       // y-axis up
+    ((col + 4) <= BOARD_SIZE_HORIZ) ? (newIB.east = 1) : (newIB.east = 0);  // x-axis right
+    (col >= 3) ? (newIB.west = 1) : (newIB.west = 0);                     // x-axis left
+    ((row + 4) <= BOARD_SIZE_VERT) ? (newIB.south = 1) : (newIB.south = 0); // y-axis down
+    (row >= 3) ? (newIB.north = 1) : (newIB.north = 0);                       // y-axis up
 
     return newIB;
 }
@@ -382,7 +382,7 @@ int check_gamewin(int board[][BOARD_SIZE_HORIZ]) {
             for (col = 0; col < BOARD_SIZE_HORIZ; col++) {
                 currIB = set_indexbound(row, col);
 
-                if (currIB.x_bound == 1) {
+                if (currIB.east == 1) {
                     if (
                         board[row][col] == i &&
                         board[row][col + 1] == i &&
@@ -393,7 +393,7 @@ int check_gamewin(int board[][BOARD_SIZE_HORIZ]) {
                     }
                 }
 
-                if (currIB.ny_bound == 1) {
+                if (currIB.south == 1) {
                     if (
                         board[row][col] == i &&
                         board[row + 1][col] == i &&
@@ -404,7 +404,7 @@ int check_gamewin(int board[][BOARD_SIZE_HORIZ]) {
                     }
                 }
 
-                if (currIB.x_bound == 1 && currIB.ny_bound == 1) {
+                if (currIB.east == 1 && currIB.south == 1) {
                     if (
                         board[row][col] == i &&
                         board[row + 1][col + 1] == i &&
@@ -415,7 +415,7 @@ int check_gamewin(int board[][BOARD_SIZE_HORIZ]) {
                     }
                 }
 
-                if (currIB.nx_bound == 1 && currIB.ny_bound == 1) {
+                if (currIB.west == 1 && currIB.south == 1) {
                     if (
                         board[row][col] == i &&
                         board[row + 1][col - 1] == i &&
